@@ -1,0 +1,21 @@
+.tab-group {
+  display: flex;
+  .tab-item {
+    padding: 10px;
+    flex: 1;
+    background: beige;
+    border: 1px solid cadetblue;
+    border-left: 0;
+    border-top: 0;
+    cursor: pointer;
+    &.disabled {
+      cursor: not-allowed;
+    }
+    &:last-child {
+      border-right: 0;
+    }
+    &:first-child {
+      border-left: 0;
+    }
+  }
+}

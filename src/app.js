@@ -4,10 +4,36 @@ require("font-awesome-sass-loader!./styles/font-awesome-sass.config.js");
 require('./styles/main.scss');
 require('./app.scss');
 import Header from './components/Header';
+import 'whatwg-fetch';
+import {ButtonDropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
+import countdown from 'countdown';
 
+window.countdown = countdown;
 class ServiceUIApp extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      events: []
+    };
+  }
+  componentWillMount() {
+    fetch('http://demo3094119.mockable.io/events')
+      .then(data => data.json())
+      .then(res => {
+        this.setState({
+          events: res.events.map(event => {
+            event.eventDropdownOpen = false;
+            return event;
+          })
+        });
+      });
+  }
+  eventDropdownToggle(i) {
+    let events = [...this.state.events];
+    events[i].eventDropdownOpen = !events[i].eventDropdownOpen;
+    this.setState({
+      events
+    });
   }
   render() {
     return (
@@ -28,24 +54,32 @@ class ServiceUIApp extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Phone1</td>
-                <td>mobile</td>
-                <td>32</td>
-                <td>32 Seconds ago</td>
-              </tr>
-              <tr>
-                <td>Phone1</td>
-                <td>mobile</td>
-                <td>32</td>
-                <td>32 Seconds ago</td>
-              </tr>
-              <tr>
-                <td>Phone1</td>
-                <td>mobile</td>
-                <td>32</td>
-                <td>32 Seconds ago</td>
-              </tr>
+              {
+                this.state.events.map((event, i) => {
+                  return (
+                    <tr key={i}>
+                      <td>{event.name}</td>
+                      <td>{event.type}</td>
+                      <td>{event.numberofevents}</td>
+                      <td className="clearfix">
+                        <span className="float-xs-left">{countdown(event.lastevent, null, null, 2).toString()}</span>
+                        <div className="float-xs-right">
+                          <ButtonDropdown isOpen={event.eventDropdownOpen} toggle={this.eventDropdownToggle.bind(this, i)}>
+                           <DropdownToggle caret>
+                             <i className="fa fa-cog"></i>
+                           </DropdownToggle>
+                           <DropdownMenu right>
+                            <pre>
+                              {JSON.stringify(event, null, 2)}
+                            </pre>
+                           </DropdownMenu>
+                          </ButtonDropdown>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              }
             </tbody>
           </table>
         </div>

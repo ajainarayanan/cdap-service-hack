@@ -5,6 +5,9 @@ var LiveReloadPlugin = require('webpack-livereload-plugin');
 var plugins = [
   new webpack.optimize.CommonsChunkPlugin("common", "common.js", Infinity),
   new LiveReloadPlugin(),
+  new webpack.SourceMapDevToolPlugin({
+    filename: '[file].map'
+  }),
   new webpack.optimize.DedupePlugin(),
   new CopyWebpackPlugin([
     {
